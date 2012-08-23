@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CL Test App</string>
+    <string name="banner">Banner</string>
+    <string name="interstitial">Interstitial</string>
+    <string name="rewards">Rewards</string>
+    <string name="opengl">OpenGL</string>
+</resources>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.burstly.cltestapp">
+    <uses-sdk android:minSdkVersion="7"/>
+    <application android:icon="@drawable/icon" android:label="@string/app_name">
+        <activity android:name=".BannerListActivity" android:theme="@android:style/Theme.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+
+        <!-- Burstly ================================================= -->
+        <activity android:name="com.burstly.lib.component.networkcomponent.burstly.BurstlyFullscreenActivity"
+                  android:configChanges="keyboard|keyboardHidden|orientation"
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
+        <!-- ========================================================= -->
+
+
+        <!-- Admob =================================================== -->
+        <activity android:name="com.google.ads.AdActivity"
+                  android:configChanges="keyboard|keyboardHidden|orientation"/>
+        <!-- ========================================================= -->
+
+
+        <!-- Millennial =============================================== -->
+        <activity android:name="com.millennialmedia.android.MMAdViewOverlayActivity"
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+                  android:configChanges="keyboardHidden|orientation|keyboard"/>
+        <activity android:name="com.millennialmedia.android.VideoPlayer"
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+                  android:configChanges="keyboardHidden|orientation|keyboard"/>
+
+        <!-- mandatory permissions  -->
+        <!-- <uses-permission android:name="android.permission.INTERNET"/> -->
+        <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE"/> -->
+        <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/> -->
+        <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> -->
+        <!-- ========================================================== -->
+
+
+        <!-- Greystripe ============================================== -->
+        <activity
+                android:name="com.greystripe.sdk.GSFullscreenActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation"/>
+
+        <!-- mandatory permissions -->
+        <!-- <uses-permission android:name="android.permission.INTERNET"/> -->
+        <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
+        <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> -->
+        <!-- ========================================================= -->
+
+
+        <!-- Inmobi ================================================== -->
+        <activity android:name="com.inmobi.androidsdk.IMBrowserActivity"
+                  android:configChanges="keyboardHidden|orientation|keyboard"/>
+
+        <!-- mandatory permissions -->
+        <!-- <uses-permission android:name="android.permission.INTERNET" /> -->
+
+        <!-- optional permissions -->
+        <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
+        <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> -->
+        <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> -->
+        <!-- <uses-permission android:name="android.permission.CALL_PHONE" /> -->
+        <!-- ========================================================= -->
+
+    </application>
+
+
+    <!-- Used by all -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Admob, Greystripe, Inmobi, Ivdopia, Jumptap, Medialets, Millennial, Mobclix -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!-- Burstly, Greystripe, Jumptap, Medialets, Millennial, Mobclix -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
+    <!-- Burstly, Medialets, Millennial -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <!-- Inmobi, Jumptap -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+    <!-- Inmobi, Medialets -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <!-- Burstly -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+
+    <!-- Medialets -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+    <!-- Medialets -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <!-- Inmobi -->
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+
+    <!-- Mobclix -->
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+</manifest>
