@@ -104,7 +104,7 @@ public class TabsFragmentActivity extends FragmentActivity implements TabHost.On
         final String OPENGL = getString(R.string.opengl);
 
         TabsFragmentActivity.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(BANNER)
-                .setIndicator(BANNER), ( tabInfo = new TabInfo(BANNER, Banner.class, args)));
+                .setIndicator(BANNER), ( tabInfo = new TabInfo(BANNER, BannerFragment.class, args)));
         this.mapTabInfo.put(tabInfo.tag, tabInfo);
         TabsFragmentActivity.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(INTERSTITIAL)
                 .setIndicator(INTERSTITIAL), ( tabInfo = new TabInfo(INTERSTITIAL, Interstitial.class, args)));

@@ -1,0 +1,6 @@
+<resources>
+    <string-array name="ad_networks">
+        <item>House Ad</item>
+        <item>InMobi</item>
+    </string-array>
+</resources>

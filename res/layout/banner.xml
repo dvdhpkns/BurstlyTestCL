@@ -5,10 +5,16 @@
   android:layout_height="fill_parent"
   android:orientation="vertical"
   >
+
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:orientation="vertical"
                     android:id="@+id/bannerParentLayout">
+        <TextView android:layout_width="fill_parent"
+                  android:layout_height="65px"
+                  android:id="@+id/textView"
+                  android:background="#ebebeb"/>
+
 
     </LinearLayout>
 

@@ -30,6 +30,6 @@ public class OpenGL extends Fragment {
             // the view hierarchy; it would just never be used.
             return null;
         }
-        return (LinearLayout)inflater.inflate(R.layout.banner, container, false);
+        return (LinearLayout)inflater.inflate(R.layout.opengl, container, false);
     }
 }

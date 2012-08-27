@@ -7,9 +7,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.burstly.conveniencelayer.Burstly;
@@ -23,34 +21,10 @@ import com.burstly.conveniencelayer.events.AdShowEvent;
 /**
  *
  */
-public class Banner extends Fragment {
-    private static final String TAG = "Banner";
-
-    // Enum holding all add data
-    public enum Ads {
-        HOUSE("0959195979157244033", "House Ad"),
-        MILLENIAL("0952195079157254033", "Millenial"),
-        ADMOB("0655195179157254033", "AdMob"),
-        GREYSTRIPE("0955195179157254033", "Greystripe"),
-        INMOBI("0755195079157254033", "InMobi");
-
-        private String zone;
-        private String adName;
-        // This assumes that all zones are from the same pub
-        public final String appId = "Js_mugok3kCBg8ABoJj_Cg";
-
-        Ads(String zone, String adName) {
-            this.zone = zone;
-            this.adName = adName;
-        }
-
-        public String getZone() {
-            return zone;
-        }
-        public String getAdName() {
-            return adName;
-        }
-    }
+public class BannerFragment extends Fragment {
+    private static final String TAG = "BannerFragment";
+    private static final int SWIPE_MIN_DISTANCE = 40;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
 
     @Override
     public void onResume() {
@@ -94,21 +68,41 @@ public class Banner extends Fragment {
 
         ViewGroup layout = (ViewGroup)inflater.inflate(R.layout.banner, container, false);
         LinearLayout parentLayout = (LinearLayout) layout.findViewById(R.id.bannerParentLayout);
-         /*
-        Button btn = (Button) layout.findViewById(R.id.btn);
-        btn.setText("test");
 
-        BurstlyBanner banner = new BurstlyBanner(this.getActivity(),
-                parentLayout,
-                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
-                BannerActivity.Ads.HOUSE.appId,
-                BannerActivity.Ads.HOUSE.getZone(),
-                BannerActivity.Ads.HOUSE.getAdName(),
-                20);
-        banner.showAd();
-        */
-        for(Ads ad : Ads.values()){
-            String zone = ad.getZone();
+        final TextView textView = (TextView) layout.findViewById(R.id.textView);
+        final GestureDetector myGestDetector = new GestureDetector(this.getActivity(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                Log.d(TAG, "e1: " + e1.getX() + " e2: " + e2.getX());
+                if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                    textView.setText("Right to left swipe");
+                    Log.d(TAG, " right to left");
+                    return false; // Right to left
+                }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                    textView.setText("Left to right swipe");
+                    Log.d(TAG, "left to right");
+                    return false; // Left to right
+                }
+
+                if(e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+                    return false; // Bottom to top
+                }  else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+                    return false; // Top to bottom
+                }
+                return false;
+            }
+        });
+
+        textView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                myGestDetector.onTouchEvent(event);
+                return true;
+            }
+        });
+
+        for(AdNetworks ad : AdNetworks.values()){
+            String zone = ad.getBannerZone();
             String adName = ad.getAdName();
 
             //inflate view from layout file
@@ -120,12 +114,14 @@ public class Banner extends Fragment {
             TextView bannerAdName = (TextView)bannerView.findViewById(R.id.bannerAdName);
             bannerAdName.setText(adName);
 
-            TextView status = (TextView)bannerView.findViewById(R.id.adStatus);
+            final TextView status = (TextView)bannerView.findViewById(R.id.adStatus);
             status.setText("Loading Banner...");
+
+            LinearLayout bannerParent = (LinearLayout)bannerView.findViewById(R.id.bannerParent);
 
             //Add BurstlyBanner to layout
             BurstlyBanner banner = new BurstlyBanner(this.getActivity(),
-                    (LinearLayout)bannerView.findViewById(R.id.bannerParent),
+                    bannerParent,
                     new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
                     ad.appId,
                     zone,
@@ -133,6 +129,9 @@ public class Banner extends Fragment {
                     20);
             banner.addBurstlyListener(getBurstlyListener(status));
             banner.showAd();
+
+
+
 
             parentLayout.addView(bannerView);
         }
