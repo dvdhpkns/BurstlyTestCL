@@ -71,97 +71,71 @@ public class BannerFragment extends Fragment {
             return null;
         }
 
-        ViewGroup layout = (ViewGroup)inflater.inflate(R.layout.banner, container, false);
-        LinearLayout parentLayout = (LinearLayout) layout.findViewById(R.id.bannerParentLayout);
-
-
-        /*
-        final TextView textView = (TextView) layout.findViewById(R.id.textView);
-
-        final GestureDetector myGestDetector = new GestureDetector(this.getActivity(), new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                Log.d(TAG, "e1: " + e1.getX() + " e2: " + e2.getX());
-                if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    textView.setText("Right to left swipe");
-                    Log.d(TAG, " right to left");
-                    return false; // Right to left
-                }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    textView.setText("Left to right swipe");
-                    Log.d(TAG, "left to right");
-                    return false; // Left to right
-                }
-
-                if(e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
-                    return false; // Bottom to top
-                }  else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
-                    return false; // Top to bottom
-                }
-                return false;
-            }
-        });
-
-        textView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                myGestDetector.onTouchEvent(event);
-                return true;
-            }
-        }); */
+        ViewGroup layout = (ViewGroup)inflater.inflate(R.layout.scrollview, container, false);
+        LinearLayout parentLayout = (LinearLayout) layout.findViewById(R.id.adNetworkParentLayout);
 
         for(AdNetworks ad : AdNetworks.values()){
-            String zone = ad.getBannerZone();
-            String adName = ad.getAdName();
+            //get banner view containing status, banner, etc.
+            View bannerView = getBannerView(ad);
 
-            //inflate view from layout file
-            View bannerView;
-            LayoutInflater vi = (LayoutInflater) this.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            bannerView = vi.inflate(R.layout.banner_inflater, null);
-
-
-            //set adName in TextView
-            TextView bannerAdName = (TextView)bannerView.findViewById(R.id.bannerAdName);
-            bannerAdName.setText(adName);
-
-            final TextView status = (TextView)bannerView.findViewById(R.id.adStatus);
-            status.setText("Loading Banner...");
-
-            LinearLayout progressBar = (LinearLayout)bannerView.findViewById(R.id.progressBar);
-            ProgressBar pB = new ProgressBar(REFRESH_TIME*1000, 10, progressBar);
-
-            LinearLayout bannerParent = (LinearLayout)bannerView.findViewById(R.id.bannerParent);
-
-            //Add BurstlyBanner to layout
-            final BurstlyBanner banner = new BurstlyBanner(this.getActivity(),
-                    bannerParent,
-                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
-                    ad.appId,
-                    zone,
-                    adName,
-                    REFRESH_TIME);
-            banner.addBurstlyListener(getBurstlyListener(status, pB));
-            banner.showAd();
-
-
-
-            ImageView refreshButton = (ImageView)bannerView.findViewById(R.id.refreshButton);
-            refreshButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    banner.showAd();
-                }
-            });
-
+            //add view to parent
             parentLayout.addView(bannerView);
         }
         return layout;
+    }
+
+    private View getBannerView(AdNetworks ad){
+        String zone = ad.getBannerZone();
+        String adName = ad.getAdName();
+
+        //inflate view from layout file
+        View bannerView;
+        LayoutInflater vi = (LayoutInflater) this.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        bannerView = vi.inflate(R.layout.banner_inflater, null);
+
+        //set adName in TextView
+        TextView bannerAdName = (TextView)bannerView.findViewById(R.id.adName);
+        bannerAdName.setText(adName);
+        //get reference to status populate with loading text
+        final TextView status = (TextView)bannerView.findViewById(R.id.adStatus);
+        status.setText(getString(R.string.loading));
+        //initialize progressbar
+        LinearLayout progressBar = (LinearLayout)bannerView.findViewById(R.id.progressBar);
+        ProgressBar pB = new ProgressBar(REFRESH_TIME*1000, 10, progressBar);
+
+        //reference to the layout that contains only the add
+        LinearLayout bannerParent = (LinearLayout)bannerView.findViewById(R.id.bannerParent);
+
+        //Add BurstlyBanner to layout
+        final BurstlyBanner banner = new BurstlyBanner(this.getActivity(),
+                bannerParent,
+                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
+                ad.appId,
+                zone,
+                adName,
+                REFRESH_TIME);
+        //add listener that will update status and start progress bar
+        banner.addBurstlyListener(getBurstlyListener(status, pB));
+        //display ad
+        banner.showAd();
+
+        //create onclick listener to refresh ad
+        ImageView refreshButton = (ImageView)bannerView.findViewById(R.id.refreshButton);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                status.setText(getString(R.string.loading));
+                banner.showAd();
+            }
+        });
+        return bannerView;
     }
 
     private BurstlyListenerAdapter getBurstlyListener(final TextView status, final ProgressBar pB) {
         BurstlyListenerAdapter listener = new BurstlyListenerAdapter() {
             @Override
             public void onShow(final BurstlyBaseAd ad, final AdShowEvent event) {
-                status.setText("Ad Shown");
+                status.setText(getString(R.string.idle));
                 pB.start();
                 Log.d(TAG, "Ad has been shown: " + ad.getName());
             }
@@ -169,16 +143,16 @@ public class BannerFragment extends Fragment {
             @Override
             public void onCache(final BurstlyBaseAd ad, final AdCacheEvent event) {
                 //should not be seen
-                status.setText("Ad Cached");
+                status.setText(getString(R.string.precached));
             }
 
             @Override
             public void onFail(final BurstlyBaseAd ad, final AdFailEvent event) {
 
                 if(event.wasRequestThrottled())
-                    status.setText("Throttled");
+                    status.setText(getString(R.string.throttled));
                 else
-                    status.setText("Failed");
+                    status.setText(getString(R.string.failed));
                     Log.d(TAG, "onFail: " + event.toString());
             }
         };
@@ -186,6 +160,9 @@ public class BannerFragment extends Fragment {
         return listener;
     }
 
+    /**
+     * Class used to create ad progress bar that lasts the duration of ad refresh
+     */
     class ProgressBar extends CountDownTimer {
         private LinearLayout progressBar;
         private View timeDown;

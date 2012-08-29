@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--suppress AndroidLintUselessParent -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
@@ -23,13 +22,8 @@
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal">
-        <TextView android:id="@+id/bannerAdName"
-                  android:background="#ebebeb"
-                  android:textColor="#363636"
-                  android:textStyle="bold"
-                  android:textSize="17dp"
-                  android:paddingLeft="6dp"
-                  android:gravity="center_vertical"
+        <TextView android:id="@+id/adName"
+                  style="@style/AdName"
                   android:layout_width="0dp"
                   android:layout_weight="35"
                   android:layout_height="fill_parent"
@@ -46,10 +40,7 @@
                       android:orientation="horizontal"
                       android:background="#ccc6c7">
             <TextView android:id="@+id/adStatus"
-                      android:background="#ccc6c7"
-                      android:textSize="14dp"
-                      android:textColor="#292929"
-                      android:paddingLeft="6dp"
+                      style="@style/AdStatus"
                       android:gravity="center_vertical"
                       android:layout_width="0dp"
                       android:layout_weight="1"
@@ -66,12 +57,12 @@
     <View
             android:background="#838383"
             android:layout_width="fill_parent"
-            android:layout_height="2dp"/>
+            android:layout_height="1dp"/>
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="65px"
                   android:orientation="vertical"
                   android:id="@+id/bannerParent"
-                  android:background="#ebebeb">
+                  android:background="#ffffff">
 
             </LinearLayout>
 
