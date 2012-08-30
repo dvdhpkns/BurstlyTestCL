@@ -110,7 +110,7 @@ public class TabsFragmentActivity extends FragmentActivity implements TabHost.On
                 .setIndicator(INTERSTITIAL), ( tabInfo = new TabInfo(INTERSTITIAL, InterstitialFragment.class, args)));
         this.mapTabInfo.put(tabInfo.tag, tabInfo);
         TabsFragmentActivity.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(REWARDS)
-                .setIndicator(REWARDS), ( tabInfo = new TabInfo(REWARDS, Rewards.class, args)));
+                .setIndicator(REWARDS), ( tabInfo = new TabInfo(REWARDS, RewardsFragment.class, args)));
         this.mapTabInfo.put(tabInfo.tag, tabInfo);
         TabsFragmentActivity.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(OPENGL)
                 .setIndicator(OPENGL), ( tabInfo = new TabInfo(OPENGL, OpenGL.class, args)));

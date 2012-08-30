@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CL Test App</string>
+    <string name="app_name">Burstly CL Test App</string>
     <string name="banner">Banner</string>
     <string name="interstitial">Interstitial</string>
     <string name="rewards">Rewards</string>
@@ -9,4 +9,6 @@
     <string name="throttled">Throttled</string>
     <string name="failed">Failed</string>
     <string name="loading">Loading</string>
+    <string name="retrieve">Retrieving Ad</string>
+    <string name="show">Show Ad</string>
 </resources>

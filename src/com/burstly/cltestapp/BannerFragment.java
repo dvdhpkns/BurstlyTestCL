@@ -50,9 +50,15 @@ public class BannerFragment extends Fragment {
     @Override
     public void onDestroy() {
         Burstly.get().onDestroyActivity(this.getActivity());
-
+        Log.d(TAG, "onDestroy() called");
         super.onDestroy();
+    }
 
+    @Override
+    public void onDestroyView() {
+        Burstly.get().onDestroyActivity(this.getActivity());
+        Log.d(TAG, "onDestroyView() called");
+        super.onDestroyView();
     }
 
     /* (non-Javadoc)
