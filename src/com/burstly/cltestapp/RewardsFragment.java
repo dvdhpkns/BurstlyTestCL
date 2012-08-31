@@ -26,8 +26,10 @@ public class RewardsFragment extends Fragment implements ICurrencyListener, IBur
 
     private static Boolean PRE_CACHE_INTERSTITIALS = false;
 
-    private static String APP_ID = "0BxvZ-YgMUaghWAOZTQaTg";
-    private static String INTERSTITIAL_ZONE_ID = "0656921169102284126";
+    //private static String APP_ID = "0BxvZ-YgMUaghWAOZTQaTg";
+    //private static String INTERSTITIAL_ZONE_ID = "0656921169102284126";
+    private static String APP_ID = "Js_mugok3kCBg8ABoJj_Cg";
+    private static String INTERSTITIAL_ZONE_ID = "0954195379157264033";
     private static String CURRENCY_LABEL_PREFIX = "Burstly Currency:";
     private static String TAG = "BurstlyCLRewards";
 
@@ -64,8 +66,8 @@ public class RewardsFragment extends Fragment implements ICurrencyListener, IBur
         mCurrencyManager.initManager(this.getActivity(), APP_ID);
         // Must add self as a listener to receive ICurrencyListener callbacks.
         mCurrencyManager.addCurrencyListener(this);
-        // Check for balance.
-        checkForCurrencyUpdate();
+        // Check for balance in onResume
+        //checkForCurrencyUpdate();
 
         // Create Burstly interstitial.
         mInterstitial = new BurstlyInterstitial(this.getActivity(), APP_ID, INTERSTITIAL_ZONE_ID, "BurstlyInterstitial");
@@ -92,9 +94,10 @@ public class RewardsFragment extends Fragment implements ICurrencyListener, IBur
 		return layout;
 	}
 
-    @Override
-    public void onDestroy()
-    {
+    /**
+     * Destroy Burstly stuff. Call this in
+     */
+    private void destroyBurstlyStuff(){
         Burstly.get().onDestroyActivity(this.getActivity());
 
         // Remove self as listener.
@@ -106,7 +109,12 @@ public class RewardsFragment extends Fragment implements ICurrencyListener, IBur
         mInterstitial = null;
         mInterstitialButton = null;
         mCurrencyLabel = null;
+    }
 
+    @Override
+    public void onDestroyView()
+    {
+        destroyBurstlyStuff();
         super.onDestroy();
     }
 
@@ -126,6 +134,8 @@ public class RewardsFragment extends Fragment implements ICurrencyListener, IBur
         // Set button enabled and change text to show ad
         mInterstitialButton.setText(getString(R.string.show));
         mInterstitialButton.setEnabled(true);
+
+        checkForCurrencyUpdate();
     }
 
     // Private methods
@@ -159,7 +169,7 @@ public class RewardsFragment extends Fragment implements ICurrencyListener, IBur
         // Received updated Burstly currency.
         // Update currency label.
         int oldBalance = balanceUpdateEvent.getOldBalance();
-        int newBalance = balanceUpdateEvent.getNewBalance();
+        final int newBalance = balanceUpdateEvent.getNewBalance();
         int gain = newBalance - oldBalance;
         if (gain > 0)
         {
@@ -170,8 +180,16 @@ public class RewardsFragment extends Fragment implements ICurrencyListener, IBur
             Log.i(TAG, "Spent currency: "+(-gain));
         }
 
-        // update display with new balance
-        mCurrencyLabel.setText(CURRENCY_LABEL_PREFIX+" " + newBalance);
+        //this must be run on the UI thread
+        mCurrencyLabel.post(new Runnable() {
+            @Override
+            public void run() {
+                // update display with new balance
+                mCurrencyLabel.setText(CURRENCY_LABEL_PREFIX+" " + newBalance);
+            }
+        });
+
+
     }
 
     public void didFailToUpdateBalance(com.burstly.lib.currency.event.BalanceUpdateEvent balanceUpdateEvent)
