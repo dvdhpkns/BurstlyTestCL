@@ -1,6 +1,7 @@
 package com.burstly.conveniencelayer;
 
 import android.app.Activity;
+import android.content.Context;
 import com.burstly.conveniencelayer.events.AdShowEvent;
 import com.burstly.lib.ui.BurstlyView;
 
@@ -42,6 +43,18 @@ public class BurstlyInterstitial extends BurstlyBaseAd implements ICacheable {
      * Callback received if the associated BurstlyView is detached from its parent.  This should never happen
      */
     protected void burstlyViewDetachedFromWindow() {}
+
+    /**
+     * Set integration mode for an instance of burstly banner
+     *
+     * @param adNetwork the ad network specified from the enum {@link BurstlyIntegrationModeAdNetworks}
+     * @param testDeviceIds {@link String[]} device Ids that will run in Integration Mode
+     * @param context {@link android.content.Context} current context
+     */
+    @Override
+    public void setIntegrationMode(BurstlyIntegrationModeAdNetworks adNetwork, String[] testDeviceIds, Context context) {
+        super.setIntegrationMode(adNetwork, testDeviceIds, context, false);
+    }
 
     /**
      * An ad was loaded and will display

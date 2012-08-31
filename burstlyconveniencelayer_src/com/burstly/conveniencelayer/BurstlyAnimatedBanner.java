@@ -1,6 +1,7 @@
 package com.burstly.conveniencelayer;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -411,5 +412,17 @@ public class BurstlyAnimatedBanner extends BurstlyBaseAd implements ICacheable {
      */
     public boolean isCachingAd() {
         return super.baseIsCachingAd();
+    }
+
+    /**
+     * Set integration mode for an instance of burstly banner
+     *
+     * @param adNetwork the ad network specified from the enum {@link BurstlyIntegrationModeAdNetworks}
+     * @param testDeviceIds {@link String[]} device Ids that will run in Integration Mode
+     * @param context {@link android.content.Context} current context
+     */
+    @Override
+    public void setIntegrationMode(BurstlyIntegrationModeAdNetworks adNetwork, String[] testDeviceIds, Context context){
+        super.setIntegrationMode(adNetwork, testDeviceIds, context, true);
     }
 }

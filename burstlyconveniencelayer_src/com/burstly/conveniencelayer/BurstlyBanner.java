@@ -1,6 +1,7 @@
 package com.burstly.conveniencelayer;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.view.ViewGroup;
 import com.burstly.lib.ui.BurstlyView;
@@ -47,6 +48,17 @@ public class BurstlyBanner extends BurstlyBaseAd {
             group.addView(burstlyView, params);
         else
             group.addView(burstlyView);
+    }
+
+    /**
+     * Set integration mode for an instance of burstly banner
+     *
+     * @param adNetwork the ad network specified from the enum {@link BurstlyIntegrationModeAdNetworks}
+     * @param testDeviceIds {@link String} device Ids that will run in Integration Mode
+     * @param context {@link android.content.Context} current context
+     */
+    public void setIntegrationMode(BurstlyIntegrationModeAdNetworks adNetwork, String[] testDeviceIds, Context context){
+        super.setIntegrationMode(adNetwork, testDeviceIds, context, true);
     }
 
     /**

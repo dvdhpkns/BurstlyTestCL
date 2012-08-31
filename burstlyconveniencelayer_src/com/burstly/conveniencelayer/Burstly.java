@@ -295,4 +295,5 @@ public class Burstly {
         //always print error level log entries to the log
         Log.e(TAG, s);
     }
+
 }

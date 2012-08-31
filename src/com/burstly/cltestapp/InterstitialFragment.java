@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.burstly.conveniencelayer.BurstlyIntegrationModeAdNetworks;
 import com.burstly.conveniencelayer.BurstlyBaseAd;
 import com.burstly.conveniencelayer.BurstlyInterstitial;
 import com.burstly.conveniencelayer.BurstlyListenerAdapter;
@@ -51,37 +52,20 @@ public class InterstitialFragment extends Fragment {
         ViewGroup layout = (ViewGroup)inflater.inflate(R.layout.scrollview, container, false);
         LinearLayout parentLayout = (LinearLayout) layout.findViewById(R.id.adNetworkParentLayout);
 
-        for(AdNetworks ad : AdNetworks.values()){
-            //get banner view containing status, banner, etc.
-            View interView = getInterstitialView(ad);
+        for(BurstlyIntegrationModeAdNetworks ad : BurstlyIntegrationModeAdNetworks.values()){
+            if(ad != BurstlyIntegrationModeAdNetworks.REWARDS_SAMPLE){
+                //get banner view containing status, banner, etc.
+                View interView = getInterstitialView(ad);
 
-            //add view to parent
-            parentLayout.addView(interView);
-        }
-/*
-        mInterstitial = new BurstlyInterstitial(this.getActivity(),
-                "TeW3mgnGxkSQXNERLognRQ",
-                "0159914779078214412",
-                "scrollview");
-
-        mInterstitial.addBurstlyListener(mListener);
-
-        mButton = (Button)layout.findViewById(R.id.button);
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mButton.setText(RETRIEVING);
-                mButton.setEnabled(false);
-
-                mInterstitial.showAd();
+                //add view to parent
+                parentLayout.addView(interView);
             }
-        });*/
-
+        }
 
 		return layout;
 	}
 
-    private View getInterstitialView(AdNetworks ad) {
+    private View getInterstitialView(BurstlyIntegrationModeAdNetworks ad) {
         String zone = ad.getInterstitialZone();
         String adName = ad.getAdName();
 
@@ -118,6 +102,7 @@ public class InterstitialFragment extends Fragment {
                 ad.appId,
                 zone,
                 adName + " Interstitial");
+        interstitial.setIntegrationMode(BurstlyIntegrationModeAdNetworks.HOUSE, "355031040066926x", this.getActivity());
         //add listener
         interstitial.addBurstlyListener(getBurstlyListener(statusTV));
 

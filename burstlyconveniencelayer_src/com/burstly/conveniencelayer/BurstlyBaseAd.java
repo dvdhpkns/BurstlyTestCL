@@ -1,7 +1,12 @@
 package com.burstly.conveniencelayer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Looper;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import com.burstly.conveniencelayer.events.*;
@@ -10,6 +15,7 @@ import com.burstly.lib.ui.BurstlyView;
 import com.burstly.lib.ui.IBurstlyAdListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -73,6 +79,17 @@ public abstract class BurstlyBaseAd implements IActivityListener {
      * Event data for the last shown ad
      */
     protected AdShowEvent mLastShow;
+
+
+    /**
+     * Raw device id.
+     */
+    private static String sDeviceId;
+
+    /**
+     * Flag used to determine whether the test mode alert has been shown
+     */
+    private static boolean testModeAlertShown = false;
 
     /**
      * Listener receiving callbacks from the {@link BurstlyView}
@@ -413,6 +430,20 @@ public abstract class BurstlyBaseAd implements IActivityListener {
     }
 
     /**
+     * Set the App Id used by this ad
+//     */
+//    protected void setAppId(String appId) {
+//        mBurstlyView.setPublisherId(appId);
+//    }
+//
+//    /**
+//     * Set the Zone Id used by this ad
+//     */
+//    private void setZoneId(String zoneId) {
+//        mBurstlyView.setZoneId(zoneId);
+//    }
+
+    /**
      * Called by the convenience layer when the activity associated with this ad is paused.  If you are not using the
      * convenience layer then this needs to be called in the onPause of the {@link Activity} associated with this ad.
      * @param activity {@link Activity} that was paused
@@ -479,5 +510,114 @@ public abstract class BurstlyBaseAd implements IActivityListener {
      */
     public String getAdParameters() {
         return "";//mBurstlyView.getCrParms();
+    }
+
+    /**
+     * Get device id. This is the same waterfall process used in the Burstly SDK.
+     *
+     * @param context {@link android.content.Context} current context
+     * @return {@link String} raw device id
+     */
+    protected static synchronized String getDeviceId(final Context context) {
+        if (sDeviceId == null) {
+            boolean invalidDeviceId = false;
+            final TelephonyManager tManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+            sDeviceId = tManager.getDeviceId();
+            Log.d(Burstly.TAG, "TelephonyManager: deviceID - {0}" + sDeviceId);
+            invalidDeviceId = !isDeviceIdValid(sDeviceId);
+            // Is there no IMEI or MEID?
+            // Is this at least Android 2.3+?
+            // Then let's get the serial.
+            if (invalidDeviceId && Build.VERSION.SDK_INT >= 9) {
+                Log.d(Burstly.TAG, "Trying to get serial of 2.3+ device...");
+                // THIS CLASS IS ONLY LOADED FOR ANDROID 2.3+
+                sDeviceId = Build.SERIAL;
+                Log.d(Burstly.TAG, "SERIAL: deviceID - {0}" + sDeviceId);
+                invalidDeviceId = !isDeviceIdValid(sDeviceId);
+            }
+            //In the sdk if there is no deviceID at this point one is created.
+        }
+        return sDeviceId;
+    }
+
+    /**
+     * Check device id for validity.
+     *
+     * @param deviceId {@link String} current device id
+     * @return {@code boolean} true if device id is valid
+     */
+    private static boolean isDeviceIdValid(final String deviceId) {
+        // Is the device ID null or empty?
+        if (deviceId == null) {
+            Log.e(Burstly.TAG, "Device id is null.");
+            return false;
+        }
+        // Is this an emulator device ID?
+        final boolean validDeviceId = (deviceId.length() != 0 && !deviceId.equals("000000000000000")
+                && !deviceId.equals("0") && !deviceId.equals("unknown"));
+        if (!validDeviceId) {
+            Log.e(Burstly.TAG, "Device id is empty or an emulator.");
+        }
+        return validDeviceId;
+    }
+
+    /**
+     * Show alert in application if device is using a test pub and zone
+     *
+     * @param context
+     */
+    protected static synchronized void showTestModeAlert(Context context) {
+        if(testModeAlertShown != true){
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    context);
+
+            // set dialog content
+            alertDialogBuilder
+                    .setTitle("Burstly Integration Mode")
+                    .setMessage("You will only see sample ads from specified networks on this device. Disable Integration Mode to see live ads.")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+
+            // show it
+            alertDialog.show();
+            testModeAlertShown = true;
+        }
+    }
+
+    /**
+     * Set integration mode for an instance of burstly banner
+     *
+     * @param adNetwork the ad network specified from the enum {@link BurstlyIntegrationModeAdNetworks}
+     * @param testDeviceIds {@link String} device Ids that will run in Integration Mode
+     * @param context {@link android.content.Context} current context
+     * @param isBanner {@link Boolean} True if burstly view is a banner false if interstitial
+     */
+    protected void setIntegrationMode(BurstlyIntegrationModeAdNetworks adNetwork, String[] testDeviceIds, Context context, boolean isBanner){
+        String deviceID = BurstlyBaseAd.getDeviceId(context);
+        Log.d(Burstly.TAG, "Checking device ID against list of test IDs. Device ID: " + deviceID);
+        if(Arrays.asList(testDeviceIds).contains(deviceID) && deviceID != null){
+            BurstlyBaseAd.showTestModeAlert(context);
+            Log.d(Burstly.TAG, "Device is Test Device. Ad " + this.getName() + " will display sample ads from specified ad network.");
+            final BurstlyView bv  = getBurstlyView();
+            bv.setPublisherId(adNetwork.appId);
+            if(isBanner) bv.setZoneId(adNetwork.getBannerZone());
+            else bv.setZoneId(adNetwork.getInterstitialZone());
+        } else {
+            Log.d(Burstly.TAG, "Device is not a test device. Using default pub and zone.");
+        }
+    }
+
+    protected abstract void setIntegrationMode(BurstlyIntegrationModeAdNetworks adNetwork, String[] testDeviceIds, Context context);
+
+    final public void setIntegrationMode(BurstlyIntegrationModeAdNetworks adNetwork, String testDeviceIds, Context context){
+        setIntegrationMode(adNetwork, new String[]{testDeviceIds}, context);
     }
 }

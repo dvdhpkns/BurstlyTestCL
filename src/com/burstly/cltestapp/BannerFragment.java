@@ -14,10 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.burstly.conveniencelayer.Burstly;
-import com.burstly.conveniencelayer.BurstlyBanner;
-import com.burstly.conveniencelayer.BurstlyBaseAd;
-import com.burstly.conveniencelayer.BurstlyListenerAdapter;
+import com.burstly.conveniencelayer.*;
 import com.burstly.conveniencelayer.events.AdCacheEvent;
 import com.burstly.conveniencelayer.events.AdFailEvent;
 import com.burstly.conveniencelayer.events.AdShowEvent;
@@ -46,14 +43,14 @@ public class BannerFragment extends Fragment {
         super.onPause();
 
     }
-
+/*
     @Override
     public void onDestroy() {
         Burstly.get().onDestroyActivity(this.getActivity());
         Log.d(TAG, "onDestroy() called");
         super.onDestroy();
     }
-
+*/
     @Override
     public void onDestroyView() {
         Burstly.get().onDestroyActivity(this.getActivity());
@@ -80,17 +77,19 @@ public class BannerFragment extends Fragment {
         ViewGroup layout = (ViewGroup)inflater.inflate(R.layout.scrollview, container, false);
         LinearLayout parentLayout = (LinearLayout) layout.findViewById(R.id.adNetworkParentLayout);
 
-        for(AdNetworks ad : AdNetworks.values()){
-            //get banner view containing status, banner, etc.
-            View bannerView = getBannerView(ad);
+        for(BurstlyIntegrationModeAdNetworks ad : BurstlyIntegrationModeAdNetworks.values()){
+            if(ad != BurstlyIntegrationModeAdNetworks.REWARDS_SAMPLE){
+                //get banner view containing status, banner, etc.
+                View bannerView = getBannerView(ad);
 
-            //add view to parent
-            parentLayout.addView(bannerView);
+                //add view to parent
+                parentLayout.addView(bannerView);
+            }
         }
         return layout;
     }
 
-    private View getBannerView(AdNetworks ad){
+    private View getBannerView(BurstlyIntegrationModeAdNetworks ad){
         String zone = ad.getBannerZone();
         String adName = ad.getAdName();
 
@@ -120,6 +119,8 @@ public class BannerFragment extends Fragment {
                 zone,
                 adName,
                 REFRESH_TIME);
+        banner.setIntegrationMode(BurstlyIntegrationModeAdNetworks.HOUSE, new String[]{"355031040066926x"}, this.getActivity());
+
         //add listener that will update status and start progress bar
         banner.addBurstlyListener(getBurstlyListener(status, pB));
         //display ad
